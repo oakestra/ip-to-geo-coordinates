@@ -1,29 +1,40 @@
 import ipaddress
-import requests
-from flask import request
 import pandas as pd
 import time
-import numpy as np
 import logging
 from decorators.singleton import singleton
 
 
 @singleton
-class Geolite():
+class Geolite:
     instance = None
 
-    def __init__(self, location=None):
+    def __init__(self, location=None, columns=None):
         logging.debug("Start building GeoLite2 dataframe...")
         self.df = None
         self.location = location
         if location is not None:
             start = time.time()
-            chunk = pd.read_csv('db/geolite2-city-ipv4.csv', chunksize=500000,
-                                usecols=['network', 'latitude', 'longitude'],
-                                dtype={'network': 'str', 'latitude': np.float64, 'longitude': np.float64})
-            self.df = pd.concat(chunk)
+            column_list = None
+            header = 'infer'
+            if columns is not None:
+                column_list = columns.split(',')
+                header = None
+            self.df = pd.read_csv(
+                self.location,
+                names=column_list,
+                header=header,
+                dtype={'ip_range_start': str, 'ip_range_end':str, 'latitude': str, 'longitude': str},
+            )
+
+            # sort dataframe by start_int column in ascending order
+            self.df['start_int'] = self.df['ip_range_start'].apply(lambda x: int(ipaddress.IPv4Address(x)))
+            self.df['end_int'] = self.df['ip_range_end'].apply(lambda x: int(ipaddress.IPv4Address(x)))
+            self.df = self.df.sort_values('start_int', ascending=True)
+
             end = time.time()
             logging.debug(f"...done building the dataframe. Took {end - start}s")
+            logging.debug(self.df)
 
     def query_geolocation_for_ips(self, ip_addresses):
         if self.df is None:
@@ -31,43 +42,30 @@ class Geolite():
 
         ip_addresses = [ipaddress.ip_address(ip) for ip in ip_addresses]
         ip_locations = {}
-        for ip in ip_addresses:
-            logging.info(f"Lookup: {ip}")
-            # If IP Adress is private just return artificial coordinates contained in url params or 0 if no params were given
-            if ip.is_private:
-                lat = request.args.get("lat") or 0
-                long = request.args.get("long") or 0
-                return {'lat': lat, 'long': long}
 
-            # Get first byte of IP
-            first_byte = str(ip).split(".")[0]
+        for query_ip in ip_addresses:
+            logging.info(f"Lookup: {query_ip}")
 
-            # In case the first byte is not contained in the GeoLite2 database, keep decrementing the first byte and check if it exists
-            start_idx = 0
-            for i in range(int(first_byte), -1, -1):
-                indices = self.df[self.df.network.str.startswith(f"{i}.")].index
-                if len(indices) >= 1:
-                    start_idx = indices[0]
-                    logging.info(f"Start lookup at index {start_idx}/{self.df['network'].size} with first byte {i}")
+            # default lat == lon == 0
+            ip_locations[str(query_ip)] = {"lat": '0', "long": '0'}
+
+            # convert input address to integer representation
+            network_int = int(ipaddress.IPv4Address(query_ip))
+
+            # perform binary search for matching row
+            low = 0
+            high = len(self.df) - 1
+
+            while low <= high:
+                mid = (low + high) // 2
+                if self.df.iloc[mid]['start_int'] <= network_int <= self.df.iloc[mid]['end_int']:
+                    ip_locations[str(query_ip)] = {"lat": str(self.df.iloc[mid]['latitude']),
+                                                   "long": str(self.df.iloc[mid]['longitude'])}
                     break
+                elif network_int < self.df.iloc[mid]['start_int']:
+                    high = mid - 1
+                else:
+                    low = mid + 1
 
-            # Start at start_idx to reduce number of iterations
-            for i in range(start_idx, self.df['network'].size):
-                ip_network = ipaddress.ip_network(self.df.at[i, 'network'])
-                if ip in ip_network:
-                    lat = self.df.at[i, 'latitude']
-                    long = self.df.at[i, 'longitude']
-                    ip_locations[str(ip)] = {"lat": lat, "long": long}
-                    logging.info(f"Found coords: {lat},{long} for IP {str(ip)}")
-                    # Stop lookup when IP was found to avoid long running process
-                    break
         return ip_locations
 
-    def user_in_cluster(self, user, cluster):
-        """
-        Checks whether the 'user' is located within the cluster or its boundaries. Since shapely is coordinate-agnostic it
-        will handle geographic coordinates expressed in latitudes and longitudes exactly the same way as coordinates on a
-        Cartesian plane. But on a sphere the behavior is different and angles are not constant along a geodesic.
-        For that reason we do a small distance correction here.
-        """
-        return True if cluster.intersects(user) or user.within(cluster) or cluster.distance(user) < 1e-5 else False

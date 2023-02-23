@@ -1,0 +1,22 @@
+ip_range_start,ip_range_end,country_code,state1,state2,city,postcode,latitude,longitude,timezone
+112.210.82.0,112.210.82.255,PH,Metro Manila,,Paranaque City,1711,14.4617,121.0255,Asia/Manila
+112.210.83.0,112.210.83.127,PH,Metro Manila,,Paranaque City,1717,14.4617,121.0255,Asia/Manila
+112.210.83.128,112.210.83.255,PH,Calabarzon,Quezon,Lucena City,4301,13.9301,121.6202,Asia/Manila
+112.210.84.0,112.210.95.255,PH,Metro Manila,,Paranaque City,1711,14.4617,121.0255,Asia/Manila
+112.210.96.0,112.210.99.255,PH,Metro Manila,,Paranaque City,1717,14.4617,121.0255,Asia/Manila
+112.210.100.0,112.210.105.255,PH,Metro Manila,,Paranaque City,1711,14.4617,121.0255,Asia/Manila
+112.210.106.0,112.210.107.255,PH,Calabarzon,Quezon,Tayabas,4327,14.0255,121.5899,Asia/Manila
+112.210.108.0,112.210.111.255,PH,Metro Manila,,Paranaque City,1612,14.6104,121.0999,Asia/Manila
+112.210.112.0,112.210.127.255,PH,Metro Manila,,Pasay,1109,14.5448,120.9900,Asia/Manila
+112.210.128.0,112.210.129.255,PH,Calabarzon,Province of Cavite,Imus,4103,14.4340,120.9376,Asia/Manila
+112.210.130.0,112.210.130.255,PH,Metro Manila,,Manila,1018,14.5833,120.9667,Asia/Manila
+112.210.131.0,112.210.131.255,PH,Calabarzon,Province of Cavite,General Trias,4107,14.3842,120.8840,Asia/Manila
+188.96.78.0,188.96.78.255,DE,Bavaria,,Munich,80339,48.1363,11.5357,Europe/Berlin
+188.96.79.0,188.96.79.255,DE,Baden-Wurttemberg,,Murrhardt,71540,48.9835,9.5673,Europe/Berlin
+188.96.80.0,188.96.87.255,DE,,,,,51.2993,9.4910,Europe/Berlin
+188.96.88.0,188.96.88.255,DE,Bavaria,,Weiden,92637,49.6764,12.1536,Europe/Berlin
+188.96.89.0,188.96.89.255,DE,Land Berlin,,Berlin,10178,52.5196,13.4069,Europe/Berlin
+188.96.90.0,188.96.90.127,DE,Schleswig-Holstein,,Wedel,22880,53.5827,9.7028,Europe/Berlin
+188.96.90.128,188.96.90.255,DE,Baden-Wurttemberg,,Ludwigsburg,71642,48.9091,9.2195,Europe/Berlin
+188.96.91.0,188.96.91.255,DE,Bavaria,,Straubing,94315,48.8859,12.5724,Europe/Berlin
+188.96.92.0,188.96.92.255,DE,Lower Saxony,,Hanover,30165,52.3959,9.7240,Europe/Berlin
