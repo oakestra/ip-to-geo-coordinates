@@ -191,4 +191,6 @@ swagger UI available at `http://localhost:10007/api/docs`
   }
 }
 ```
+## Default IP DP 
 
+The dafult IP to coordinates database is  <a href="https://db-ip.com/db/lite.php"> <img src="img/dpip.png" alt= “DbIp” width="40"></a>

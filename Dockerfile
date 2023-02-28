@@ -1,12 +1,12 @@
-FROM python:3.8.5-slim-buster
+FROM python:3.10
 LABEL org.opencontainers.image.source https://github.com/oakestra/ip-to-geo-coordinates
 
 RUN mkdir /app
 
 #download geolitedb
-ADD https://github.com/sapics/ip-location-db/raw/master/geolite2-city/geolite2-city-ipv4.csv.gz /app/db/
+ADD https://download.db-ip.com/free/dbip-city-lite-2023-02.csv.gz /app/db/
 RUN gunzip /app/db/geolite2-city-ipv4.csv.gz
-ENV GEOLITE_CSV_LOCATION='/app/db/geolite2-city-ipv4.csv'
+ENV GEOLITE_CSV_LOCATION='/app/db/dbip-city-lite-2023-02.csv'
 ENV GEOLITE_CSV_COLUMNS='ip_range_start,ip_range_end,country_code,state1,state2,city,postcode,latitude,longitude,timezone'
 
 ADD requirements.txt /app
