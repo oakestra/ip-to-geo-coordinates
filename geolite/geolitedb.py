@@ -27,6 +27,9 @@ class Geolite:
                 dtype={'ip_range_start': str, 'ip_range_end':str, 'latitude': str, 'longitude': str},
             )
 
+            #remove ipv6 addresses
+            self.df = self.df[self.df['ip_range_start'].apply(lambda x: isinstance(ipaddress.ip_address(x), ipaddress.IPv4Address))]
+
             # sort dataframe by start_int column in ascending order
             self.df['start_int'] = self.df['ip_range_start'].apply(lambda x: int(ipaddress.IPv4Address(x)))
             self.df['end_int'] = self.df['ip_range_end'].apply(lambda x: int(ipaddress.IPv4Address(x)))
