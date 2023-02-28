@@ -5,7 +5,7 @@ RUN mkdir /app
 
 #download geolitedb
 ADD https://download.db-ip.com/free/dbip-city-lite-2023-02.csv.gz /app/db/
-RUN gunzip /app/db/geolite2-city-ipv4.csv.gz
+RUN gunzip /app/db/dbip-city-lite-2023-02.csv.gz
 ENV GEOLITE_CSV_LOCATION='/app/db/dbip-city-lite-2023-02.csv'
 ENV GEOLITE_CSV_COLUMNS='ip_range_start,ip_range_end,country_code,state1,state2,city,postcode,latitude,longitude,timezone'
 
